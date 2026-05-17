@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirror — Real Estate Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dim: rgba(201,168,76,0.15);
+  --deep: #080810;
+  --surface: #0F0F1A;
+  --card: #141420;
+  --card2: #1A1A28;
+  --border: rgba(201,168,76,0.12);
+  --border2: rgba(255,255,255,0.06);
+  --text: #E8E4DC;
+  --muted: #6B6880;
+  --muted2: #9A96A8;
+  --green: #3DB87A;
+  --green-bg: rgba(61,184,122,0.1);
+  --blue: #4A8FE0;
+  --blue-bg: rgba(74,143,224,0.1);
+  --red: #E05555;
+  --red-bg: rgba(224,85,85,0.1);
+  --orange: #E07A35;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--deep);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 0%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 90% 100%, rgba(74,143,224,0.04) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 220px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.logo-area {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.logo-sub {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+nav { padding: 16px 12px; flex: 1; }
+
+.nav-section {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 12px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.82rem;
+  color: var(--muted2);
+  margin-bottom: 2px;
+}
+
+.nav-item:hover { background: var(--gold-dim); color: var(--text); }
+.nav-item.active { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--border); }
+.nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--gold);
+  color: var(--deep);
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* MAIN */
+.main {
+  margin-left: 220px;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* TOPBAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--border2);
+  background: rgba(8,8,16,0.8);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--text);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  padding: 8px 18px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-gold { background: var(--gold); color: var(--deep); }
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--muted2); border: 1px solid var(--border2); }
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+.sync-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+.sync-btn:hover { border-color: var(--gold); color: var(--gold); }
+.sync-btn.loading { animation: pulse 1s infinite; }
+
+/* CONTENT */
+.content { padding: 28px 32px; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* STATS ROW */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border); }
+.stat-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.stat-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.stat-value { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--text); line-height: 1; }
+.stat-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+.stat-icon { position: absolute; right: 16px; top: 16px; font-size: 1.4rem; opacity: 0.3; }
+
+/* TABLE */
+.table-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.table-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  width: 180px;
+}
+
+.search-box input::placeholder { color: var(--muted); }
+
+.data-table { width: 100%; border-collapse: collapse; }
+
+.data-table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border2);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  font-size: 0.78rem;
+  color: var(--text);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  white-space: nowrap;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(201,168,76,0.03); }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-red { background: var(--red-bg); color: var(--red); }
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.badge-gold { background: var(--gold-dim); color: var(--gold); }
+.badge-gray { background: rgba(255,255,255,0.05); color: var(--muted2); }
+
+/* LEAD CARDS */
+.leads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.lead-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 18px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.lead-card:hover { border-color: var(--border); transform: translateY(-1px); }
+
+.lead-card::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:3px;
+}
+
+.lead-card.strong::before { background: var(--green); }
+.lead-card.good::before { background: var(--gold); }
+.lead-card.weak::before { background: var(--orange); }
+
+.lead-score {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.lead-score.strong { color: var(--green); }
+.lead-score.good { color: var(--gold); }
+.lead-score.weak { color: var(--orange); }
+
+.lead-type { font-size: 0.78rem; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.lead-location { font-size: 0.72rem; color: var(--muted2); margin-bottom: 10px; }
+.lead-refs { display: flex; gap: 8px; flex-wrap: wrap; }
+.lead-ref { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); background: var(--surface); padding: 2px 8px; border-radius: 3px; }
+.lead-details { font-size: 0.72rem; color: var(--muted2); margin-top: 8px; line-height: 1.5; }
+.lead-date { font-size: 0.62rem; color: var(--muted); margin-top: 8px; }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid .full { grid-column: 1/-1; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+.field input, .field select, .field textarea {
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+.field select option { background: var(--card2); }
+.field textarea { resize: vertical; min-height: 80px; }
+
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.form-section-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border2);
+}
+
+/* LOADING */
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.fade-in { animation: fadeIn 0.3s ease both; }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3; }
+.empty-state p { font-size: 0.82rem; }
+
+/* MOBILE MENU */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 90;
+}
+
+/* SCORE BAR */
+.score-bar {
+  height: 3px;
+  background: var(--border2);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.score-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+/* PAGINATION */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid var(--border2);
+}
+.page-btn {
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+.page-btn:hover, .page-btn.active { border-color: var(--gold); color: var(--gold); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 0.78rem;
+  color: var(--text);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  max-width: 280px;
+}
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .menu-toggle { display: block; }
+  .overlay.show { display: block; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .topbar { padding: 14px 16px 14px 56px; }
+  .content { padding: 20px 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .full { grid-column: 1; }
+  .leads-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo-area">
+    <div class="logo">Mirror</div>
+    <div class="logo-sub">Real Estate Intelligence</div>
+  </div>
+  <nav>
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPanel('dashboard')">
+      <span class="icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('inventory')">
+      <span class="icon">⊞</span> Inventory
+      <span class="nav-badge" id="inv-badge">—</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('inquiries')">
+      <span class="icon">◎</span> Inquiries
+      <span class="nav-badge" id="inq-badge">—</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('leads')">
+      <span class="icon">◆</span> Lead Matches
+      <span class="nav-badge" id="lead-badge">—</span>
+    </div>
+    <div class="nav-section">Actions</div>
+    <div class="nav-item" onclick="showPanel('add-inquiry')">
+      <span class="icon">＋</span> Add Inquiry
+    </div>
+    <div class="nav-item" onclick="showPanel('add-inventory')">
+      <span class="icon">＋</span> Add Inventory
+    </div>
+  </nav>
+  <div class="sidebar-footer">Mirror AI v4.3</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <button class="sync-btn" id="sync-btn" onclick="loadAllData()">
+        <span>↻</span> Sync Data
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⊞</div>
+          <div class="stat-label">Total Inventory</div>
+          <div class="stat-value" id="stat-inv">—</div>
+          <div class="stat-sub">Available properties</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">◎</div>
+          <div class="stat-label">Active Inquiries</div>
+          <div class="stat-value" id="stat-inq">—</div>
+          <div class="stat-sub">Client requirements</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">◆</div>
+          <div class="stat-label">Lead Matches</div>
+          <div class="stat-value" id="stat-leads">—</div>
+          <div class="stat-sub">AI matched results</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✦</div>
+          <div class="stat-label">Available</div>
+          <div class="stat-value" id="stat-avail">—</div>
+          <div class="stat-sub">Ready to show</div>
+        </div>
+      </div>
+
+      <!-- Recent Leads -->
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Recent Lead Matches</div>
+          <button class="btn btn-outline" onclick="showPanel('leads')">View All</button>
+        </div>
+        <div id="recent-leads-body">
+          <div class="loading-state"><div class="spinner"></div><br>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="panel" id="panel-inventory">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Property Inventory</div>
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="inv-search" placeholder="Search properties..." oninput="filterInventory()">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Ref ID</th>
+                <th>Type</th>
+                <th>Purpose</th>
+                <th>Area</th>
+                <th>Building</th>
+                <th>Size (sqft)</th>
+                <th>Price (AED)</th>
+                <th>Status</th>
+                <th>PHPP</th>
+              </tr>
+            </thead>
+            <tbody id="inv-table"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="inv-pagination"></div>
+      </div>
+    </div>
+
+    <!-- INQUIRIES -->
+    <div class="panel" id="panel-inquiries">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Client Inquiries</div>
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="inq-search" placeholder="Search inquiries..." oninput="filterInquiries()">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Ref No</th>
+                <th>Client</th>
+                <th>Type</th>
+                <th>Purpose</th>
+                <th>Area</th>
+                <th>Size (sqft)</th>
+                <th>Budget (AED)</th>
+                <th>PHPP</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inq-table"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="inq-pagination"></div>
+      </div>
+    </div>
+
+    <!-- LEADS -->
+    <div class="panel" id="panel-leads">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:0.75rem;color:var(--muted)">Sorted by match score — highest first</div>
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="lead-search" placeholder="Search leads..." oninput="filterLeads()">
+        </div>
+      </div>
+      <div class="leads-grid" id="leads-grid">
+        <div class="loading-state"><div class="spinner"></div><br>Loading leads...</div>
+      </div>
+    </div>
+
+    <!-- ADD INQUIRY -->
+    <div class="panel" id="panel-add-inquiry">
+      <div class="form-card">
+        <div class="form-section-title">New Client Inquiry</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Client Name</label>
+            <input type="text" id="f-client" placeholder="Client full name">
+          </div>
+          <div class="field">
+            <label>Reference Number</label>
+            <input type="text" id="f-refno" placeholder="Mobile number">
+          </div>
+          <div class="field">
+            <label>Property Type</label>
+            <select id="f-type">
+              <option value="">Select type</option>
+              <option>Office</option>
+              <option>Office Space</option>
+              <option>Office Desk</option>
+              <option>Business Centre</option>
+              <option>Shop</option>
+              <option>Full Floor</option>
+              <option>Half Floor</option>
+              <option>Ground Floor</option>
+              <option>Studio</option>
+              <option>1BR</option>
+              <option>2BR</option>
+              <option>3BR</option>
+              <option>4BR</option>
+              <option>5BR</option>
+              <option>Apartment</option>
+              <option>Villa</option>
+              <option>Townhouse</option>
+              <option>Duplex</option>
+              <option>Building</option>
+              <option>Full Building</option>
+              <option>Tower</option>
+              <option>Plot</option>
+              <option>Commercial Plot</option>
+              <option>Building Plot</option>
+              <option>Tower Plot</option>
+              <option>Warehouse</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Purpose</label>
+            <select id="f-purpose">
+              <option>Rent</option>
+              <option>Buy</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Preferred Area</label>
+            <input type="text" id="f-area" placeholder="e.g. Business Bay, JVC">
+          </div>
+          <div class="field">
+            <label>Required Size (sqft)</label>
+            <input type="number" id="f-size" placeholder="e.g. 1200">
+          </div>
+          <div class="field">
+            <label>Max Budget (AED)</label>
+            <input type="number" id="f-budget" placeholder="Leave empty = open budget">
+          </div>
+          <div class="field">
+            <label>PHPP Required?</label>
+            <select id="f-phpp">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Source</label>
+            <input type="text" id="f-source" placeholder="WhatsApp, Referral, etc.">
+          </div>
+          <div class="field">
+            <label>Note</label>
+            <input type="text" id="f-note" placeholder="Any additional notes">
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:10px">
+          <button class="btn btn-gold" onclick="submitInquiry()">Submit Inquiry</button>
+          <button class="btn btn-outline" onclick="clearInquiryForm()">Clear</button>
+        </div>
+        <div id="inq-msg" style="margin-top:12px;font-size:0.78rem;display:none"></div>
+      </div>
+    </div>
+
+    <!-- ADD INVENTORY -->
+    <div class="panel" id="panel-add-inventory">
+      <div class="form-card">
+        <div class="form-section-title">Add New Property</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Purpose</label>
+            <select id="i-purpose">
+              <option>Sale</option>
+              <option>Rent</option>
+              <option>Sale and Rent</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tower / Building Name</label>
+            <input type="text" id="i-tower" placeholder="Building name">
+          </div>
+          <div class="field">
+            <label>Area</label>
+            <input type="text" id="i-area" placeholder="e.g. Business Bay">
+          </div>
+          <div class="field">
+            <label>Property Type</label>
+            <select id="i-type">
+              <option value="">Select type</option>
+              <option>Office</option>
+              <option>Office Space</option>
+              <option>Office Desk</option>
+              <option>Business Centre</option>
+              <option>Shop</option>
+              <option>Full Floor</option>
+              <option>Half Floor</option>
+              <option>Ground Floor</option>
+              <option>Studio</option>
+              <option>1BR</option>
+              <option>2BR</option>
+              <option>3BR</option>
+              <option>4BR</option>
+              <option>5BR</option>
+              <option>Apartment</option>
+              <option>Villa</option>
+              <option>Townhouse</option>
+              <option>Duplex</option>
+              <option>Building</option>
+              <option>Full Building</option>
+              <option>Tower</option>
+              <option>Plot</option>
+              <option>Warehouse</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Size (sqft)</label>
+            <input type="number" id="i-size" placeholder="e.g. 1200">
+          </div>
+          <div class="field">
+            <label>Price (AED)</label>
+            <input type="number" id="i-price" placeholder="e.g. 2500000">
+          </div>
+          <div class="field">
+            <label>Reference ID</label>
+            <input type="text" id="i-refid" placeholder="e.g. PROP-50">
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="i-status">
+              <option>Available</option>
+              <option>Unavailable</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>PHPP?</label>
+            <select id="i-phpp">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Details</label>
+            <textarea id="i-details" placeholder="Furnished, parking, view, etc."></textarea>
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:10px">
+          <button class="btn btn-gold" onclick="submitInventory()">Add Property</button>
+          <button class="btn btn-outline" onclick="clearInventoryForm()">Clear</button>
+        </div>
+        <div id="inv-msg" style="margin-top:12px;font-size:0.78rem;display:none"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────
+const SHEET_ID = '17WF9xB9UTCCbyVL1ko4rnJW6rVumDZtcaKRfgeq5cGo';
+const BASE = https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=;
+
+// ── STATE ────────────────────────────────────────────────────
+let invData = [], inqData = [], leadData = [];
+let filteredInv = [], filteredInq = [], filteredLeads = [];
+let invPage = 1, inqPage = 1;
+const PAGE_SIZE = 20;
+
+// ── NAVIGATION ───────────────────────────────────────────────
+const panels = ['dashboard','inventory','inquiries','leads','add-inquiry','add-inventory'];
+const titles = {
+  'dashboard':'Dashboard',
+  'inventory':'Property Inventory',
+  'inquiries':'Client Inquiries',
+  'leads':'Lead Matches',
+  'add-inquiry':'Add New Inquiry',
+  'add-inventory':'Add New Property'
+};
+
+function showPanel(name) {
+  panels.forEach(p => {
+    document.getElementById('panel-'+p).classList.remove('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  });
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('page-title').textContent = titles[name] || name;
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+name+"'")) n.classList.add('active');
+  });
+  if(window.innerWidth <= 768) closeMobileMenu();
+}
+
+function toggleMenu() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeMobileMenu() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ── DATA FETCH ───────────────────────────────────────────────
+async function fetchSheet(sheetName) {
+  try {
+    const res = await fetch(BASE + encodeURIComponent(sheetName));
+    const text = await res.text();
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+    const rows = json.table.rows;
+    return rows.map(r => r.c ? r.c.map(c => c ? (c.v !== null && c.v !== undefined ? String(c.v) : '') : '') : []);
+  } catch(e) {
+    console.error('Fetch error:', sheetName, e);
+    return [];
+  }
+}
+
+async function loadAllData() {
+  const btn = document.getElementById('sync-btn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span>↻</span> Syncing...';
+
+  try {
+    const [inv, inq, lead] = await Promise.all([
+      fetchSheet('My Inventory'),
+      fetchSheet('Inquiries'),
+      fetchSheet('Lead Matching')
+    ]);
+
+    invData  = inv.slice(1).filter(r => r[0] || r[1] || r[3]);
+    inqData  = inq.slice(1).filter(r => r[3] || r[1]);
+    leadData = lead.slice(1).filter(r => r[1] || r[2]);
+
+    filteredInv   = [...invData];
+    filteredInq   = [...inqData];
+    filteredLeads = [...leadData];
+
+    updateStats();
+    renderInventory();
+    renderInquiries();
+    renderLeads();
+    renderRecentLeads();
+
+    showToast('✓ Data synced successfully');
+  } catch(e) {
+    showToast('⚠️ Sync failed — check connection');
+  }
+
+  btn.classList.remove('loading');
+  btn.innerHTML = '<span>↻</span> Sync Data';
+}
+
+// ── STATS ────────────────────────────────────────────────────
+function updateStats() {
+  const avail = invData.filter(r => (r[9]||'').toLowerCase() === 'available').length;
+  document.getElementById('stat-inv').textContent = invData.length;
+  document.getElementById('stat-inq').textContent = inqData.length;
+  document.getElementById('stat-leads').textContent = leadData.length;
+  document.getElementById('stat-avail').textContent = avail;
+  document.getElementById('inv-badge').textContent = invData.length;
+  document.getElementById('inq-badge').textContent = inqData.length;
+  document.getElementById('lead-badge').textContent = leadData.length;
+}
+
+// ── INVENTORY TABLE ──────────────────────────────────────────
+function renderInventory() {
+  const tbody = document.getElementById('inv-table');
+  const start = (invPage-1)*PAGE_SIZE;
+  const page  = filteredInv.slice(start, start+PAGE_SIZE);
+
+  if(!page.length) {
+    tbody.innerHTML = <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted)">No properties found</td></tr>;
+    return;
+  }
+
+  tbody.innerHTML = page.map(r => {
+    const status = r[9] || '';
+    const statusClass = status.toLowerCase()==='available' ? 'badge-green' : 'badge-red';
+    const phpp = r[11] || '';
+    const price = r[6] ? Number(r[6]).toLocaleString() : '—';
+    const size  = r[4] ? Number(r[4]).toLocaleString() : '—';
+    return `<tr class="fade-in">
+      <td style="color:var(--gold);font-family:'DM Mono',monospace;font-size:0.72rem">${r[8]||'—'}</td>
+      <td>${r[3]||'—'}</td>
+      <td>${r[0]||'—'}</td>
+      <td>${r[2]||'—'}</td>
+      <td>${r[1]||'—'}</td>
+      <td>${size}</td>
+      <td>${price}</td>
+      <td><span class="badge ${statusClass}">${status||'—'}</span></td>
+      <td>${phpp ? <span class="badge badge-blue">${phpp}</span> : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  renderPagination('inv', filteredInv.length, invPage, p => { invPage=p; renderInventory(); });
+}
+
+function filterInventory() {
+  const q = document.getElementById('inv-search').value.toLowerCase();
+  filteredInv = invData.filter(r => r.some(c => c.toLowerCase().includes(q)));
+  invPage = 1;
+  renderInventory();
+}
+
+// ── INQUIRIES TABLE ──────────────────────────────────────────
+function renderInquiries() {
+  const tbody = document.getElementById('inq-table');
+  const start = (inqPage-1)*PAGE_SIZE;
+  const page  = filteredInq.slice(start, start+PAGE_SIZE);
+
+  if(!page.length) {
+    tbody.innerHTML = <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted)">No inquiries found</td></tr>;
+    return;
+  }
+
+  tbody.innerHTML = page.map(r => {
+    const status = r[10] || '';
+    let statusClass = 'badge-gray';
+    if(status.toLowerCase()==='new') statusClass='badge-blue';
+    if(status.toLowerCase()==='in progress') statusClass='badge-gold';
+    if(status.toLowerCase()==='won') statusClass='badge-green';
+    if(status.toLowerCase()==='lost') statusClass='badge-red';
+    const budget = r[6] ? Number(r[6]).toLocaleString() : 'Open';
+    const size   = r[7] ? Number(r[7]).toLocaleString() : '—';
+    const phpp   = r[11] || '';
+    return `<tr class="fade-in">
+      <td style="color:var(--gold);font-family:'DM Mono',monospace;font-size:0.72rem">${r[2]||'—'}</td>
+      <td>${r[1]||'—'}</td>
+      <td>${r[3]||'—'}</td>
+      <td>${r[5]||'—'}</td>
+      <td>${r[4]||'—'}</td>
+      <td>${size}</td>
+      <td>${budget}</td>
+      <td>${phpp ? <span class="badge badge-blue">${phpp}</span> : '—'}</td>
+      <td>${status ? <span class="badge ${statusClass}">${status}</span> : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  renderPagination('inq', filteredInq.length, inqPage, p => { inqPage=p; renderInquiries(); });
+}
+
+function filterInquiries() {
+  const q = document.getElementById('inq-search').value.toLowerCase();
+  filteredInq = inqData.filter(r => r.some(c => c.toLowerCase().includes(q)));
+  inqPage = 1;
+  renderInquiries();
+}
+
+// ── LEADS ─────────────────────────────────────────────────────
+function renderLeads() {
+  const grid = document.getElementById('leads-grid');
+  if(!filteredLeads.length) {
+    grid.innerHTML = <div class="empty-state"><div class="empty-icon">◆</div><p>No lead matches yet.<br>Run match in Google Sheet first.</p></div>;
+    return;
+  }
+  grid.innerHTML = filteredLeads.map(r => {
+    const scoreStr = r[3] || '';
+    const score = parseInt(scoreStr) || 0;
+    const cls = score>=85?'strong':score>=70?'good':'weak';
+    const result = (r[4]||'').replace(/\n/g,'<br>');
+    const date = r[5] ? r[5].substring(0,10) : '';
+    let fillColor = score>=85?'var(--green)':score>=70?'var(--gold)':'var(--orange)';
+    return `<div class="lead-card ${cls} fade-in">
+      <div class="lead-score ${cls}">${scoreStr||'—'}</div>
+      <div class="score-bar"><div class="score-fill" style="width:${score}%;background:${fillColor}"></div></div>
+      <div style="margin-top:10px"></div>
+      <div class="lead-refs">
+        <span class="lead-ref">INQ: ${r[1]||'—'}</span>
+        <span class="lead-ref">INV: ${r[2]||'—'}</span>
+      </div>
+      <div class="lead-details">${result}</div>
+      ${date?<div class="lead-date">Matched: ${date}</div>:''}
+    </div>`;
+  }).join('');
+}
+
+function filterLeads() {
+  const q = document.getElementById('lead-search').value.toLowerCase();
+  filteredLeads = leadData.filter(r => r.some(c => c.toLowerCase().includes(q)));
+  renderLeads();
+}
+
+// ── RECENT LEADS (Dashboard) ──────────────────────────────────
+function renderRecentLeads() {
+  const el = document.getElementById('recent-leads-body');
+  const recent = leadData.slice(0, 8);
+  if(!recent.length) {
+    el.innerHTML = <div class="empty-state"><div class="empty-icon">◆</div><p>No matches yet</p></div>;
+    return;
+  }
+  el.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
+    <thead><tr><th>Score</th><th>Inquiry Ref</th><th>Inventory Ref</th><th>Result</th><th>Date</th></tr></thead>
+    <tbody>${recent.map(r => {
+      const score = parseInt(r[3])||0;
+      const cls = score>=85?'badge-green':score>=70?'badge-gold':'badge-gray';
+      const result = (r[4]||'').split('\n')[0];
+      return `<tr><td><span class="badge ${cls}">${r[3]||'—'}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold)">${r[1]||'—'}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted2)">${r[2]||'—'}</td>
+        <td style="color:var(--muted2);max-width:220px;overflow:hidden;text-overflow:ellipsis">${result}</td>
+        <td style="color:var(--muted);font-size:0.7rem">${(r[5]||'').substring(0,10)}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+// ── PAGINATION ────────────────────────────────────────────────
+function renderPagination(id, total, current, cb) {
+  const el = document.getElementById(id+'-pagination');
+  const pages = Math.ceil(total/PAGE_SIZE);
+  if(pages<=1){el.innerHTML='';return;}
+  let html = '';
+  if(current>1) html+=<button class="page-btn" onclick="(${cb.toString()})(${current-1})">←</button>;
+  for(let i=Math.max(1,current-2);i<=Math.min(pages,current+2);i++) {
+    html+=<button class="page-btn${i===current?' active':''}" onclick="(${cb.toString()})(${i})">${i}</button>;
+  }
+  if(current<pages) html+=<button class="page-btn" onclick="(${cb.toString()})(${current+1})">→</button>;
+  el.innerHTML = html;
+}
+
+// ── FORMS ────────────────────────────────────────────────────
+function submitInquiry() {
+  const msg = document.getElementById('inq-msg');
+  msg.style.display='block';
+  msg.style.color='var(--gold)';
+  msg.textContent='⚠️ To add inquiry: open Google Sheet → Inquiries tab → add row there. This app reads live data. After adding, click Sync Data.';
+}
+
+function submitInventory() {
+  const msg = document.getElementById('inv-msg');
+  msg.style.display='block';
+  msg.style.color='var(--gold)';
+  msg.textContent='⚠️ To add property: open Google Sheet → My Inventory tab → add row there. This app reads live data. After adding, click Sync Data.';
+}
+
+function clearInquiryForm() {
+  ['f-client','f-refno','f-area','f-size','f-budget','f-source','f-note'].forEach(id => document.getElementById(id).value='');
+}
+
+function clearInventoryForm() {
+  ['i-tower','i-area','i-size','i-price','i-refid','i-details'].forEach(id => document.getElementById(id).value='');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className='toast';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+loadAllData();
+</script>
+</body>
+</html>
