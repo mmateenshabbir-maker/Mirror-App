@@ -212,14 +212,11 @@ nav { padding:16px 12px; flex:1; }
 
 <script>
 // ── SHEET CONFIG ──────────────────────────────────────────────
-// Published Google Sheet ID
-const PUB = '2PACX-1vTpmFEPrwScBASF_gIiuaPwdbHOCUqGfHk1jsnnOsuKoxnLcbiqh1OYv7ndtqJX1USW5rY0_V6SLaLd';
-
-// Sheet GIDs (tab IDs from your Google Sheet URLs)
+const API = 'https://script.google.com/macros/s/AKfycbzF-6b3xYSuqF34IXKVLMInmmS9vBH_rGrmDnE5QhqkW8TwhwbpmHiQoJbPVNOpxQO2tQ/exec';
 const SHEETS = {
-  inv:  { gid: '0',          name: 'My Inventory'  },
-  inq:  { gid: '1643613538', name: 'Inquiries'      },
-  lead: { gid: '1326262737', name: 'Lead Matching'  }
+  inv:  'My Inventory',
+  inq:  'Inquiries',
+  lead: 'Lead Matching'
 };
 
 // ── STATE ────────────────────────────────────────────────────
@@ -228,32 +225,12 @@ let filtered = { inv:[], inq:[], lead:[] };
 let pages = { inv:1, inq:1 };
 const PER_PAGE = 25;
 
-// ── FETCH CSV ────────────────────────────────────────────────
-async function fetchCSV(gid) {
-  const url = https://docs.google.com/spreadsheets/d/e/${PUB}/pub?output=csv&gid=${gid};
+// ── FETCH FROM APPS SCRIPT API ───────────────────────────────
+async function fetchCSV(sheetName) {
+  const url = API + '?sheet=' + encodeURIComponent(sheetName);
   const res = await fetch(url);
   if (!res.ok) throw new Error('HTTP ' + res.status);
-  const text = await res.text();
-  return parseCSV(text);
-}
-
-function parseCSV(text) {
-  const rows = [];
-  const lines = text.split('\n');
-  for (const line of lines) {
-    if (!line.trim()) continue;
-    const cells = [];
-    let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cells.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
-    }
-    cells.push(cur.trim());
-    rows.push(cells);
-  }
-  return rows;
+  return await res.json();
 }
 
 // ── LOAD ALL ─────────────────────────────────────────────────
@@ -264,9 +241,9 @@ async function loadAllData() {
 
   try {
     const [invRows, inqRows, leadRows] = await Promise.all([
-      fetchCSV(SHEETS.inv.gid),
-      fetchCSV(SHEETS.inq.gid),
-      fetchCSV(SHEETS.lead.gid)
+      fetchCSV(SHEETS.inv),
+      fetchCSV(SHEETS.inq),
+      fetchCSV(SHEETS.lead)
     ]);
 
     // Skip header row, filter empty rows
